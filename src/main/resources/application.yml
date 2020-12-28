@@ -1,7 +1,7 @@
 server:
  port: 8081
  servlet:
-  contexPath: /api	
+  context-path: /api	
 spring:
  jpa:
   hibernate:
