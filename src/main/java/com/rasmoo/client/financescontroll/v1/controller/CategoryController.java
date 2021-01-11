@@ -26,7 +26,7 @@ import com.rasmoo.client.financescontroll.v1.dto.CategoryDTO;
 import com.rasmoo.client.financescontroll.v1.vo.Response;
 
 @RestController
-@RequestMapping("/v1/categoria")
+@RequestMapping({"/v1/categoria","/v2/categoria"})
 public class CategoryController {
 
 	@Autowired
