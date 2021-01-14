@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rasmoo.client.financescontroll.entity.Category;
 import com.rasmoo.client.financescontroll.entity.Entry;
+import com.rasmoo.client.financescontroll.entity.User;
 import com.rasmoo.client.financescontroll.repository.ICategoryRepository;
 import com.rasmoo.client.financescontroll.repository.IEntryRepository;
+import com.rasmoo.client.financescontroll.v1.service.IUserInfoService;
 import com.rasmoo.client.financescontroll.v1.vo.EntryVO;
 import com.rasmoo.client.financescontroll.v1.vo.Response;
 
@@ -32,11 +34,15 @@ public class EntryController {
 	@Autowired
 	private ICategoryRepository categoryRepository;
 
+	@Autowired
+	private IUserInfoService userInfoService;
+
 	@PostMapping
 	public ResponseEntity<Response<Entry>> cadastrarLancamento(@RequestBody EntryVO entryVO) {
 		Response<Entry> response = new Response<>();
 		try {
-			Optional<Category> category = this.categoryRepository.findById(entryVO.getCategoryId());
+			User usuario = this.userInfoService.findAuth();
+			Optional<Category> category = this.categoryRepository.findByUserId(entryVO.getCategoryId(), usuario.getId());
 			if (entryVO.getId() == null && category.isPresent()) {
 
 				Entry lancamento = new Entry();
@@ -44,7 +50,7 @@ public class EntryController {
 				lancamento.setCategoria(category.get());
 				lancamento.setTipo(entryVO.getTipo());
 				lancamento.setValor(entryVO.getValor());
-
+				lancamento.setUser(usuario);
 				response.setData(this.entryRepository.save(lancamento));
 				response.setStatusCode(HttpStatus.CREATED.value());
 				return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -62,16 +68,15 @@ public class EntryController {
 	public ResponseEntity<Response<Entry>> atualizarLancamento(@RequestBody EntryVO entryVO) {
 		Response<Entry> response = new Response<>();
 		try {
-
-			Optional<Category> category = this.categoryRepository.findById(entryVO.getCategoryId());
+			User usuario = this.userInfoService.findAuth();
+			Optional<Category> category = this.categoryRepository.findByUserId(entryVO.getCategoryId(), usuario.getId());
 			Optional<Entry> entry = this.entryRepository.findById(entryVO.getId());
 			if (entry.isPresent() && category.isPresent()) {
-				
 				Entry lancamento = entry.get();
 				lancamento.setCategoria(category.get());
 				lancamento.setTipo(entryVO.getTipo());
 				lancamento.setValor(entryVO.getValor());
-				
+
 				response.setData(this.entryRepository.save(lancamento));
 				response.setStatusCode(HttpStatus.OK.value());
 				return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -89,7 +94,9 @@ public class EntryController {
 	public ResponseEntity<Response<List<Entry>>> listarLancamentos() {
 		Response<List<Entry>> response = new Response<>();
 		try {
-			response.setData(this.entryRepository.findAll());
+
+			User usuario = this.userInfoService.findAuth();
+			response.setData(this.entryRepository.findAllByUserId(usuario.getId()));
 			response.setStatusCode(HttpStatus.OK.value());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (Exception e) {
