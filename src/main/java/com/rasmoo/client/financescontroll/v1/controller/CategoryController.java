@@ -26,7 +26,7 @@ import com.rasmoo.client.financescontroll.v1.service.IUserInfoService;
 import com.rasmoo.client.financescontroll.v1.vo.Response;
 
 @RestController
-@RequestMapping("/v1/categoria")
+@RequestMapping({"/v1/categoria","/v2/categoria"})
 public class CategoryController {
 	
 	private static Logger logger = LogManager.getLogger(CategoryController.class);
