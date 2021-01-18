@@ -37,7 +37,7 @@ public class OAuthConfiguration {
 			.secret("$2a$10$6zSKaHn71WVp8aP37Q2Ow.oFVCgNbHncEuhPmMWmIdKDFaBDoiVwG")
 			.authorizedGrantTypes("password")
 			.scopes("read","write")
-			.accessTokenValiditySeconds(16)
+			.accessTokenValiditySeconds(3601)
 			.resourceIds(RESOURCE_ID);
 		
 		}
