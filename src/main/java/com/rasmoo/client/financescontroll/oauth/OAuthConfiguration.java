@@ -14,8 +14,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 
 @Configuration
 public class OAuthConfiguration {
-	public static final String RESOURCE_ID = "financesControll";
 	
+	public static final String RESOURCE_ID = "financesControll";
 	
 	@EnableAuthorizationServer
 	public static class AuthorizationServer extends AuthorizationServerConfigurerAdapter{
@@ -36,6 +36,14 @@ public class OAuthConfiguration {
 			.secret("$2a$10$6zSKaHn71WVp8aP37Q2Ow.oFVCgNbHncEuhPmMWmIdKDFaBDoiVwG")
 			.authorizedGrantTypes("password")
 			.scopes("read","write")
+			.accessTokenValiditySeconds(3601)
+			.resourceIds(RESOURCE_ID)
+			.and()
+			.withClient("cliente-canva")
+			.secret("$2a$10$6zSKaHn71WVp8aP37Q2Ow.oFVCgNbHncEuhPmMWmIdKDFaBDoiVwG")
+			.authorizedGrantTypes("authorization_code")
+			.scopes("read")
+			.redirectUris("https://www.canva.com/pt_br/")
 			.accessTokenValiditySeconds(3601)
 			.resourceIds(RESOURCE_ID);
 		
