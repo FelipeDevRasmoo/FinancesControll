@@ -1,9 +1,12 @@
 package com.rasmoo.client.financescontroll.v1.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,32 @@ public class UserController {
 			user.getCredencial().setSenha(pass.encode(userVo.getPassword()));
 			
 			response.setData(this.userRepository.save(user));
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+			
+		} catch (Exception e) {
+			response.setData(null);
+			response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
+
+	}
+	
+	@PatchMapping
+	public ResponseEntity<Response<User>> atualizarSenhaUsuario(@RequestBody UserVO userVo) {
+		Response<User> response = new Response<>();
+		
+		try {
+			
+			Optional<User> user = this.userRepository.findByEmail(userVo.getEmail());
+			
+			if(!user.isPresent()) {
+				throw new Exception();
+			}
+			
+			user.get().getCredencial().setSenha(pass.encode(userVo.getPassword()));
+			
+			response.setData(this.userRepository.save(user.get()));
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 			
