@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import com.rasmoo.client.financescontroll.v1.vo.Response;
 import com.rasmoo.client.financescontroll.v1.vo.UserVO;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/v1/usuario")
 @PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
 public class UserController {
