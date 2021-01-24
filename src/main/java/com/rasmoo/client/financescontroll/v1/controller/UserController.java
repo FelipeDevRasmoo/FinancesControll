@@ -20,6 +20,7 @@ import com.rasmoo.client.financescontroll.v1.vo.UserVO;
 
 @RestController
 @RequestMapping(value = "/v1/usuario")
+@PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
 public class UserController {
 	
 	@Autowired
@@ -28,7 +29,6 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder pass;
 	
-	@PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
 	@PostMapping
 	public ResponseEntity<Response<User>> cadastrarUsuario(@RequestBody UserVO userVo) {
 		Response<User> response = new Response<>();
@@ -53,7 +53,6 @@ public class UserController {
 
 	}
 	
-	@PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
 	@PatchMapping
 	public ResponseEntity<Response<User>> atualizarSenha(@RequestBody UserVO userVo) {
 		Response<User> response = new Response<>();
@@ -70,7 +69,7 @@ public class UserController {
 			
 			response.setData(this.userRepository.save(user.get()));
 			
-			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 			
 		} catch (Exception e) {
 			response.setData(null);
