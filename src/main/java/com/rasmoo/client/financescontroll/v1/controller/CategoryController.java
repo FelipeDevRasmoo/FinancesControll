@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +28,9 @@ import com.rasmoo.client.financescontroll.v1.service.IUserInfoService;
 import com.rasmoo.client.financescontroll.v1.vo.Response;
 
 @RestController
-@RequestMapping({"/v1/categoria","/v2/categoria"})
 @CrossOrigin
+@RequestMapping({"/v1/categoria","/v2/categoria"})
+@PreAuthorize(value = "#oauth2.hasScope('cw_logado')")
 public class CategoryController {
 	
 	private static Logger logger = LogManager.getLogger(CategoryController.class);
@@ -88,7 +90,8 @@ public class CategoryController {
 		}
 
 	}
-
+	
+	@PreAuthorize(value = "#oauth2.hasAnyScope('cc_logado','cw_logado')")
 	@GetMapping
 	public ResponseEntity<Response<List<Category>>> listarCategorias() {
 		Response<List<Category>> response = new Response<>();
@@ -105,7 +108,8 @@ public class CategoryController {
 		}
 
 	}
-
+	
+	@PreAuthorize(value = "#oauth2.hasAnyScope('cc_logado','cw_logado')")
 	@GetMapping("/{id}")
 	public ResponseEntity<Response<Category>> consultarCategoria(@PathVariable Long id) {
 		Response<Category> response = new Response<>();
