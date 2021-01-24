@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import com.rasmoo.client.financescontroll.v1.vo.UserVO;
 
 @RestController
 @RequestMapping(value = "/v1/usuario")
+@PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
 public class UserController {
 	
 	@Autowired
@@ -52,7 +54,7 @@ public class UserController {
 	}
 	
 	@PatchMapping
-	public ResponseEntity<Response<User>> atualizarSenhaUsuario(@RequestBody UserVO userVo) {
+	public ResponseEntity<Response<User>> atualizarSenha(@RequestBody UserVO userVo) {
 		Response<User> response = new Response<>();
 		
 		try {
@@ -67,7 +69,7 @@ public class UserController {
 			
 			response.setData(this.userRepository.save(user.get()));
 			
-			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 			
 		} catch (Exception e) {
 			response.setData(null);
