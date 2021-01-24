@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder pass;
 	
+	@PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
 	@PostMapping
 	public ResponseEntity<Response<User>> cadastrarUsuario(@RequestBody UserVO userVo) {
 		Response<User> response = new Response<>();
@@ -51,6 +53,7 @@ public class UserController {
 
 	}
 	
+	@PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
 	@PatchMapping
 	public ResponseEntity<Response<User>> atualizarSenha(@RequestBody UserVO userVo) {
 		Response<User> response = new Response<>();

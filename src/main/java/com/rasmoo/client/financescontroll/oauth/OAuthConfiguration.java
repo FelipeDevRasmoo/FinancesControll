@@ -2,9 +2,11 @@ package com.rasmoo.client.financescontroll.oauth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -13,6 +15,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecurityExpressionHandler;
 
 @Configuration
 public class OAuthConfiguration {
@@ -40,10 +43,10 @@ public class OAuthConfiguration {
 
 			clients.inMemory().withClient("cliente-web")
 					.secret("$2a$10$6zSKaHn71WVp8aP37Q2Ow.oFVCgNbHncEuhPmMWmIdKDFaBDoiVwG")
-					.authorizedGrantTypes("password", "client_credentials","refresh_token").scopes("read", "write")
-					.accessTokenValiditySeconds(31).resourceIds(RESOURCE_ID).and().withClient("cliente-canva")
+					.authorizedGrantTypes("password", "client_credentials","refresh_token").scopes("cw_logado", "cw_naologado")
+					.accessTokenValiditySeconds(3601).resourceIds(RESOURCE_ID).and().withClient("cliente-canva")
 					.secret("$2a$10$6zSKaHn71WVp8aP37Q2Ow.oFVCgNbHncEuhPmMWmIdKDFaBDoiVwG")
-					.authorizedGrantTypes("authorization_code", "implicit").scopes("read")
+					.authorizedGrantTypes("authorization_code", "implicit").scopes("cc_logado")
 					.redirectUris("https://www.canva.com/pt_br/").accessTokenValiditySeconds(3601)
 					.resourceIds(RESOURCE_ID);
 
@@ -65,6 +68,16 @@ public class OAuthConfiguration {
 			http.authorizeRequests().anyRequest().authenticated().and().cors();
 		}
 
+	}
+	
+	@EnableGlobalMethodSecurity(prePostEnabled = true)
+	public static class OAuthExpressionHandler extends GlobalMethodSecurityConfiguration{
+		
+		@Override
+		protected MethodSecurityExpressionHandler createExpressionHandler() {
+			return new OAuth2MethodSecurityExpressionHandler();
+		}
+		
 	}
 
 }
