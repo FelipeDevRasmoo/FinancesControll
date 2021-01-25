@@ -29,7 +29,7 @@ import com.rasmoo.client.financescontroll.v1.vo.Response;
 @RestController
 @CrossOrigin
 @RequestMapping("/v1/lancamento")
-@PreAuthorize(value = "#oauth2.hasScope('cw_logado')")
+@PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasAnyRole('ROLE_FC_ADM','ROLE_CUSTOMER')")
 public class EntryController {
 
 	@Autowired

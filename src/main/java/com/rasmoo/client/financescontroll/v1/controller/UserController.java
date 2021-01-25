@@ -24,7 +24,7 @@ import com.rasmoo.client.financescontroll.v1.vo.UserVO;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/v1/usuario")
-@PreAuthorize(value = "#oauth2.hasScope('cw_naologado')")
+@PreAuthorize(value = "#oauth2.hasScope('cw_naologado') and hasAnyRole('ROLE_FC_ADM','ROLE_CUSTOMER')")
 public class UserController {
 	
 	@Autowired
