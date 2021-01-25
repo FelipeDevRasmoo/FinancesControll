@@ -29,8 +29,8 @@ import com.rasmoo.client.financescontroll.v1.vo.Response;
 
 @RestController
 @CrossOrigin
-@RequestMapping({"/v1/categoria","/v2/categoria"})
-@PreAuthorize(value = "#oauth2.hasScope('cw_logado')")
+@RequestMapping("/v1/categoria")
+@PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasRole('ROLE_CUSTOMER')")
 public class CategoryController {
 	
 	private static Logger logger = LogManager.getLogger(CategoryController.class);
@@ -91,7 +91,7 @@ public class CategoryController {
 
 	}
 	
-	@PreAuthorize(value = "#oauth2.hasAnyScope('cc_logado','cw_logado')")
+	@PreAuthorize(value = "#oauth2.hasAnyScope('cc_logado','cw_logado') and hasRole('ROLE_CUSTOMER')")
 	@GetMapping
 	public ResponseEntity<Response<List<Category>>> listarCategorias() {
 		Response<List<Category>> response = new Response<>();
