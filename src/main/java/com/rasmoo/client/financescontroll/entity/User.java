@@ -30,6 +30,9 @@ public class User {
 	
 	@Column(name = "name")
 	private String nome;
+	
+	@Column(name = "role")
+	private String role = "ROLE_CUSTOMER";
 
 	@JsonIgnore
 	@Column(name = "credential")

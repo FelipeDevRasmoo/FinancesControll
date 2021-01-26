@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +27,9 @@ import com.rasmoo.client.financescontroll.v1.vo.EntryVO;
 import com.rasmoo.client.financescontroll.v1.vo.Response;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/v1/lancamento")
+@PreAuthorize(value = "#oauth2.hasScope('cw_logado') and hasAnyRole('ROLE_FC_ADM','ROLE_CUSTOMER')")
 public class EntryController {
 
 	@Autowired
@@ -89,7 +93,8 @@ public class EntryController {
 		}
 
 	}
-
+	
+	@PreAuthorize(value = "#oauth2.hasAnyScope('cc_logado','cw_logado')")
 	@GetMapping
 	public ResponseEntity<Response<List<Entry>>> listarLancamentos() {
 		Response<List<Entry>> response = new Response<>();
@@ -106,7 +111,8 @@ public class EntryController {
 		}
 
 	}
-
+	
+	@PreAuthorize(value = "#oauth2.hasAnyScope('cc_logado','cw_logado')")
 	@GetMapping("/{id}")
 	public ResponseEntity<Response<Entry>> consultarLancamento(@PathVariable("id") long id) {
 		Response<Entry> response = new Response<>();
