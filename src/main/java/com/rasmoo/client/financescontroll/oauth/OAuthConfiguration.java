@@ -1,6 +1,12 @@
 package com.rasmoo.client.financescontroll.oauth;
 
+import java.util.Collection;
+
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,73 +20,85 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.approval.Approval;
+import org.springframework.security.oauth2.provider.approval.ApprovalStore;
+import org.springframework.security.oauth2.provider.approval.JdbcApprovalStore;
 import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecurityExpressionHandler;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 @Configuration
 public class OAuthConfiguration {
-	
+
 	public static final String RESOURCE_ID = "financesControll";
-	
+
 	@EnableAuthorizationServer
-	public static class AuthorizationServer extends AuthorizationServerConfigurerAdapter{
-		
+	public static class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
+
+		@Autowired
+		private ClientDetailsService clientDetailsService;
+
 		@Autowired
 		private AuthenticationManager authenticationManager;
-		
+
+		@Autowired
+		@Qualifier("dsOAuth")
+		private DataSource dataSource;
+
+		@Bean
+		public TokenStore tokenStore() {
+			return new JdbcTokenStore(this.dataSource);
+		}
+
+		@Bean
+		public ApprovalStore approvalStore() {
+			return new JdbcApprovalStore(this.dataSource);
+		}
+
 		@Override
 		public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-			endpoints.authenticationManager(authenticationManager);
+			DefaultOAuth2RequestFactory requestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
+			requestFactory.setCheckUserScopes(Boolean.TRUE);
+			
+			endpoints
+				.authenticationManager(authenticationManager)
+				.requestFactory(requestFactory)
+				.approvalStore(this.approvalStore())
+				.tokenStore(this.tokenStore());
 		}
-		
+
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-			
-			clients.inMemory()
-			.withClient("cliente-web")
-			.secret("$2a$10$6zSKaHn71WVp8aP37Q2Ow.oFVCgNbHncEuhPmMWmIdKDFaBDoiVwG")
-			.authorizedGrantTypes("password","client_credentials","refresh_token")
-			.scopes("cw_logado","cw_naologado")
-			.accessTokenValiditySeconds(121)
-			.resourceIds(RESOURCE_ID)
-			.and()
-			.withClient("cliente-canva")
-			.secret("$2a$10$6zSKaHn71WVp8aP37Q2Ow.oFVCgNbHncEuhPmMWmIdKDFaBDoiVwG")
-			.authorizedGrantTypes("authorization_code","implicit")
-			.scopes("cc_logado")
-			.redirectUris("https://www.canva.com/pt_br/")
-			.accessTokenValiditySeconds(3601)
-			.resourceIds(RESOURCE_ID);
-		
+			clients.jdbc(this.dataSource);
 		}
-		
+
 	}
-	
-	
+
 	@EnableResourceServer
-	public static class ResourceServer extends ResourceServerConfigurerAdapter{
-		
+	public static class ResourceServer extends ResourceServerConfigurerAdapter {
+
 		@Override
 		public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
 			resources.resourceId(RESOURCE_ID);
-		
+
 		}
-		
+
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().anyRequest().authenticated().and()
-			.cors();
+			http.authorizeRequests().anyRequest().authenticated().and().cors();
 		}
-		
-		
+
 	}
-	
+
 	@EnableGlobalMethodSecurity(prePostEnabled = true)
-	public static class OAuthExpressionHandler extends GlobalMethodSecurityConfiguration{
-		
+	public static class OAuthExpressionHandler extends GlobalMethodSecurityConfiguration {
+
 		@Override
 		protected MethodSecurityExpressionHandler createExpressionHandler() {
 			return new OAuth2MethodSecurityExpressionHandler();
 		}
 	}
-	
+
 }
