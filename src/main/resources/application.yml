@@ -3,11 +3,13 @@ server:
  servlet:
   context-path: /api	
 spring:
- jpa:
-  hibernate:
-   ddl-auto: update
- datasource:
+ datasource-fc:
   url: jdbc:mysql://localhost:3306/financescontrollDB
   username: felipe
+  password: senha123
+  driver-class-name: com.mysql.cj.jdbc.Driver
+ datasource-oauth:
+  url: jdbc:mysql://localhost:3306/oauth
+  username: fc_oauth
   password: senha123
   driver-class-name: com.mysql.cj.jdbc.Driver
