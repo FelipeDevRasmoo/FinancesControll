@@ -1,5 +1,7 @@
 package com.rasmoo.client.financescontroll.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,8 +17,13 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "CATEGORY")
-public class Category {
+public class Category implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1208152022954211978L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;

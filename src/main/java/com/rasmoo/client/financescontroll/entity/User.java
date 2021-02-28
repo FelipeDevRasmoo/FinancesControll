@@ -1,5 +1,6 @@
 package com.rasmoo.client.financescontroll.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -21,7 +20,12 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "USER")
-public class User {
+public class User implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2614874437766945384L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
