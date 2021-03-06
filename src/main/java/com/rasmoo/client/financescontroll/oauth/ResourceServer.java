@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
@@ -29,8 +30,8 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
 	@Override
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
 		resources.resourceId(RESOURCE_ID);
+		resources.tokenServices(this.defaultTokenServices());
 		resources.tokenStore(this.tokenStore());
-
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
 	@Bean
 	public UserAuthenticationConverter userTokenConverter() {
 		DefaultUserAuthenticationConverter converter = new DefaultUserAuthenticationConverter();
-		converter.setUserDetailsService(detalhesDoUsuario);
+		converter.setUserDetailsService(this.detalhesDoUsuario);
 		return converter;
 	}
 	
@@ -59,6 +60,13 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
 		accessTokenConverter.setAccessTokenConverter(this.defaultAccesTokenConverter());
 		accessTokenConverter.setSigningKey("assinatura-financesControll");
 		return accessTokenConverter;
+	}
+	
+	@Bean
+	public DefaultTokenServices defaultTokenServices() {
+		DefaultTokenServices tokenServices = new DefaultTokenServices();
+		tokenServices.setTokenStore(this.tokenStore());
+		return tokenServices;
 	}
 	
 	@Bean
