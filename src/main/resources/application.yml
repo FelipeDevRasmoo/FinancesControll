@@ -13,3 +13,8 @@ spring:
   username: fc_oauth
   password: senha123
   driver-class-name: com.mysql.cj.jdbc.Driver
+host:
+ full:
+  dns:
+   auth:
+    link: http://localhost:8081/api/oauth/token
